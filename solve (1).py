@@ -58,5 +58,19 @@ def solve_exercise(exercise_location : str, answer_location : str):
         # Serialize Python answer data (stored in answer) to JSON answer data and write it to answer_file
         json.dump(answer, answer_file, indent=4)
     
-def polynoial_arithmetic_additon():
-     
+def polynoial_arithmetic_additon(mod, f, g):
+    # for i in min(size)
+    # check which array has bigger size
+    # do a for loop to add each coefficient 
+    #    => add the two coefficient 
+    # --> if bigger than the mode => while (coef > mod) coef - mod = coef 
+    # if one is shorter just copy the bigger terms from the longer polynomial
+    return 0
+
+def polynoial_arithmetic_subtraction(mod, f, g):
+    # check which array has bigger size
+    # do a for loop to subtract each coefficient 
+    #    => subtract the two coefficient
+    # --> if bigger than the mode => while (coef < 0) coef + mod = coef 
+    # if one is shorter just copy the bigger terms from the longer polynomial
+    return 0
