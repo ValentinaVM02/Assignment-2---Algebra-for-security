@@ -67,6 +67,7 @@ def polynoial_arithmetic_additon(mod, f, g):
 
     smaller_size_g = False
     smaller_size = min(len(g), len(f))
+    for_range = max(len(g), len(f))
     a = []
 
     #checks which is the smaller array
@@ -74,7 +75,7 @@ def polynoial_arithmetic_additon(mod, f, g):
         smaller_size_g = True
     
     #fills the answer array with terms
-    for i in max(len(g), len(f)):
+    for i in range(for_range - 1):
         if (i < smaller_size):
             a[i] = g[i] + f[i] 
             #makes sure that the end result is in the given mod
@@ -89,7 +90,7 @@ def polynoial_arithmetic_additon(mod, f, g):
                 a[i] = g[i]
             while (a[i] >= mod):
                 a[i] = a[i] - mod
-
+    return a
 
 def polynoial_arithmetic_subtraction(mod, f, g):
     # check which array has bigger size
@@ -107,7 +108,7 @@ def polynoial_arithmetic_subtraction(mod, f, g):
         smaller_size_g = True
     
     #fills the answer array with terms
-    for i in max(len(g), len(f)):
+    for i in range(max(len(g), len(f))):
         if (i < smaller_size):
             a[i] = f[i] - g[i] 
             #makes sure that the end result is in the given mod
@@ -122,3 +123,8 @@ def polynoial_arithmetic_subtraction(mod, f, g):
                 a[i] = g[i]
             while (a[i] < 0):
                 a[i] = a[i] + mod
+    return a
+
+    
+
+print(polynoial_arithmetic_additon(3, [2, 2, 1], [2, 2, 1, 1, 1]))
