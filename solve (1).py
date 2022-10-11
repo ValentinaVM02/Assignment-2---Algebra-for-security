@@ -59,13 +59,37 @@ def solve_exercise(exercise_location : str, answer_location : str):
         json.dump(answer, answer_file, indent=4)
     
 def polynoial_arithmetic_additon(mod, f, g):
-    # for i in min(size)
     # check which array has bigger size
     # do a for loop to add each coefficient 
     #    => add the two coefficient 
     # --> if bigger than the mode => while (coef > mod) coef - mod = coef 
     # if one is shorter just copy the bigger terms from the longer polynomial
-    return 0
+
+    smaller_size_g = False
+    smaller_size = min(len(g), len(f))
+    a = []
+
+    #checks which is the smaller array
+    if smaller_size == len(g):
+        smaller_size_g = True
+    
+    #fills the answer array with terms
+    for i in max(len(g), len(f)):
+        if (i < smaller_size):
+            a[i] = g[i] + f[i] 
+            #makes sure that the end result is in the given mod
+            while (a[i] >= mod):
+                a[i] = a[i] - mod
+        #when one of the polynomial is shorter the higher terms of the other polynomial are copied and checked that 
+        # they are in the given mod 
+        else:
+            if smaller_size_g:
+                a[i] = f[i]
+            else:
+                a[i] = g[i]
+            while (a[i] >= mod):
+                a[i] = a[i] - mod
+
 
 def polynoial_arithmetic_subtraction(mod, f, g):
     # check which array has bigger size
@@ -73,4 +97,28 @@ def polynoial_arithmetic_subtraction(mod, f, g):
     #    => subtract the two coefficient
     # --> if bigger than the mode => while (coef < 0) coef + mod = coef 
     # if one is shorter just copy the bigger terms from the longer polynomial
-    return 0
+
+    smaller_size_g = False
+    smaller_size = min(len(g), len(f))
+    a = []
+
+    #checks which is the smaller array
+    if smaller_size == len(g):
+        smaller_size_g = True
+    
+    #fills the answer array with terms
+    for i in max(len(g), len(f)):
+        if (i < smaller_size):
+            a[i] = f[i] - g[i] 
+            #makes sure that the end result is in the given mod
+            while (a[i] < 0):
+                a[i] = a[i] + mod
+        #when one of the polynomial is shorter the higher terms of the other polynomial are copied and checked that 
+        # they are in the given mod 
+        else:
+            if smaller_size_g:
+                a[i] = f[i]
+            else:
+                a[i] = g[i]
+            while (a[i] < 0):
+                a[i] = a[i] + mod
