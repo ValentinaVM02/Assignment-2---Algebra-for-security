@@ -93,3 +93,18 @@ def polynoial_arithmetic_subtraction(mod, f, g):
                 a[i] = a[i] + mod
 
     return a
+
+def finite_field_addition(mod, f, g, p_mod):
+    a = polynoial_arithmetic_additon(mod, f, g)
+    
+    for i in range(len(a)):
+        while (a[i] > p_mod[i]):
+            a[i] = a[i] % p_mod[i]
+    
+    return a
+
+# print(finite_field_addition(5, [0,2], [4,3], [1,4,1,1]))
+
+def finite_field_subtraction(mod, f, g, p_mod):
+    
+    return 0
