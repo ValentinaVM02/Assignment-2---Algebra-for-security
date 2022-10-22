@@ -58,7 +58,7 @@ def solve_exercise(exercise_location : str, answer_location : str):
         # Serialize Python answer data (stored in answer) to JSON answer data and write it to answer_file
         json.dump(answer, answer_file, indent=4)
     
-def polynoial_arithmetic_additon(mod, f, g):
+def polynomial_arithmetic_additon(mod, f, g):
     min_length = min(len(g), len(f))
     # copying the longer array into the answer array
     if len(g) < len(f):
@@ -76,7 +76,7 @@ def polynoial_arithmetic_additon(mod, f, g):
 
     return a
 
-def polynoial_arithmetic_subtraction(mod, f, g):
+def polynomial_arithmetic_subtraction(mod, f, g):
     # copying the longer array into the answer array
     min_length = min(len(g), len(f))
     if len(g) < len(f):
