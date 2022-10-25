@@ -16,6 +16,7 @@
 
 # Import built-in json library for handling input/output 
 import json
+from operator import truediv
 
 
 def solve_exercise(exercise_location : str, answer_location : str):
@@ -324,3 +325,38 @@ def finite_field_subtraction(mod, f, g, p_mod):
 
 # for testing:
 # print(finite_field_subtraction(2, [0,1,1], [0,1,1], [1,1,0,1]))
+
+def ord_decomposition (p):
+    i = 2
+    decomp = []
+    while i * i <= n:
+        if n % i:
+            i += 1
+        else:
+            n //= i
+            decomp.append(i)
+    if n > 1:
+        decomp.append(n)
+    return decomp
+
+def is_prime(n):
+  for i in range(2,n):
+    if (n%i) == 0:
+      return False
+  return True
+
+def finite_field_primitivity_check(mod, f, p_mod):
+    ord = mod - 1
+    prime = is_prime(ord)
+    check = False  
+    powers = []  
+    if prime:
+        check = True
+    else: 
+        ord_dec = ord_decomposition(ord)
+        for i in range (len(ord_dec)):
+            powers[i] = ord // ord_dec[i]
+        #for j in range (len(f)):
+    
+
+    return check
