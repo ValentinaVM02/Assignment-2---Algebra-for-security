@@ -17,6 +17,7 @@
 # Import built-in json library for handling input/output 
 import json
 from operator import truediv
+from random import randint, randrange
 
 
 def solve_exercise(exercise_location : str, answer_location : str):
@@ -415,3 +416,22 @@ def finite_field_primitivity_check(mod, f, p_mod):
             check = False 
     
     return check
+
+def random_element_in_F(mod, p_mod):
+    a = []
+    for i in range (len(p_mod)):
+        a.append(randrange(0, mod))
+    
+    q,r = polynomial_division(a, p_mod, mod)
+
+    return clean_array(r)
+
+
+def primitive_element_generation(mod, p_mod):
+    a = random_element_in_F(mod, p_mod)
+    while not finite_field_primitivity_check(mod, a, p_mod):
+        a = random_element_in_F(mod, p_mod)
+
+    return a
+
+print(primitive_element_generation(5, [4,1,2,1]))
