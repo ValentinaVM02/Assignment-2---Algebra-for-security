@@ -15,8 +15,10 @@
 ##
 
 # Import built-in json library for handling input/output 
+from dataclasses import field
 import json
 from operator import truediv
+from re import A
 
 
 def solve_exercise(exercise_location : str, answer_location : str):
@@ -112,11 +114,14 @@ def get_degree(f):
     return -1 if (len(f) == 1 and (f[0] == 0)) else len(f) - 1 
 
 
-# cleans the array from leading 0s
+# clears the array from leading 0s
 def clean_array(r):
-    for i in range(len(r) - 1, 0, -1):
-        if r[i] == 0:
-            r = r[0:i] 
+    i = len(r) - 1 
+
+    while r[i] == 0 and i > 0:
+        r = r[0:i]
+        i = i - 1 
+    
     return r  
 
 
@@ -173,7 +178,7 @@ def polynomial_division(f,g,m):
 
     # self explanatory, if g has higher degree then return quotient = 0, remainder = f
     if get_degree(f) < get_degree(g):
-        return 0,f 
+        return [0],f 
 
     
     inv_lcg = mod_inv(g[-1],m)
@@ -326,7 +331,25 @@ def finite_field_subtraction(mod, f, g, p_mod):
 # for testing:
 # print(finite_field_subtraction(2, [0,1,1], [0,1,1], [1,1,0,1]))
 
-def ord_decomposition (p):
+def finite_field_multiplication(mod, f, g, p_mod):
+    a = polynomial_multiplication(f, g, mod)
+    q, r = polynomial_division(a, p_mod, mod)
+    return clean_array(r)
+
+
+def finite_field_division(mod, f, g, p_mod):
+
+    q , r = polynomial_division(f, g, mod)
+
+    if get_degree(q) > get_degree(p_mod)-1:
+        q , r_q =  polynomial_division(q, p_mod, mod)
+    
+    if get_degree(r) > get_degree(p_mod)-1:
+        q_r , r =  polynomial_division(q, p_mod, mod)
+    
+    return clean_array(q) , clean_array(r)
+
+def decomposition (n):
     i = 2
     decomp = []
     while i * i <= n:
@@ -345,18 +368,37 @@ def is_prime(n):
       return False
   return True
 
-def finite_field_primitivity_check(mod, f, p_mod):
-    ord = mod - 1
-    prime = is_prime(ord)
-    check = False  
-    powers = []  
-    if prime:
-        check = True
-    else: 
-        ord_dec = ord_decomposition(ord)
-        for i in range (len(ord_dec)):
-            powers[i] = ord // ord_dec[i]
-        #for j in range (len(f)):
-    
+def is_one(f):
+    if len(f) == 0:
+        return False
+    if f[0] != 1:
+        return False
+    for i in range (1, len(f)):
+        if f[i] != 0:
+            return False
 
+    return True
+
+def finite_field_primitivity_check(mod, f, p_mod):
+    ord = (mod**get_degree(f)) - 1
+    
+    if is_prime(ord):
+        return True
+
+    check = True  
+    powers = []
+    results = []  
+      
+    ord_dec = set(decomposition(ord)) # get the prime divisors only once
+    for dec in ord_dec:
+        powers.append(ord // dec)
+    for power in powers:
+        total = f
+        for i in range (power-1):
+            total = finite_field_multiplication(mod, f, total, p_mod)
+        results.append(total)
+    for result in results:
+        if is_one(result):
+            check = False 
+    
     return check
