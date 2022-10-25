@@ -15,10 +15,8 @@
 ##
 
 # Import built-in json library for handling input/output 
-from dataclasses import field
 import json
 from operator import truediv
-from re import A
 
 
 def solve_exercise(exercise_location : str, answer_location : str):
@@ -124,11 +122,16 @@ def clean_array(r):
     
     return r  
 
+#normalizes coeffiecients of polynomial
+def normalize(f,mod):
+
+    for i in range(len(f)):
+        f[i] = f[i]%mod
+
+    return f
 
 def input_check(f,g,m):
     return True if get_degree(f) == -1 else False, True if get_degree(g) == -1 else False, False if m >= 2 else True
-
-    
 
 # multiply 2 polynomials f,g with mod m
 def polynomial_multiplication(f, g, m):
@@ -275,8 +278,6 @@ def polynomial_irreducibility_check(f,p):
     
     
     # implement Eisenstein criteron
-            
-
 
     return True
 
@@ -328,12 +329,11 @@ def finite_field_subtraction(mod, f, g, p_mod):
     
     return clean_array(r)
 
-# for testing:
-# print(finite_field_subtraction(2, [0,1,1], [0,1,1], [1,1,0,1]))
 
 def finite_field_multiplication(mod, f, g, p_mod):
     a = polynomial_multiplication(f, g, mod)
     q, r = polynomial_division(a, p_mod, mod)
+    
     return clean_array(r)
 
 
@@ -349,6 +349,19 @@ def finite_field_division(mod, f, g, p_mod):
     
     return clean_array(q) , clean_array(r)
 
+
+def finite_field_inversion(mod, f,  p_mod):
+
+    x, y, d = polynomial_extended_euclidian(f,p_mod, mod)
+    x_f = polynomial_division(x,p_mod,mod)
+
+    print(d)
+    
+    if len(d) == 1 and d[0] == 1:
+        return x_f
+    else:
+        return 'inverse does not exits'
+        
 def decomposition (n):
     i = 2
     decomp = []

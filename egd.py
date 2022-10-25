@@ -113,13 +113,6 @@ def get_degree(f):
 
 
 # cleans the array from leading 0s
-def clean_array(r):
-    for i in range(len(r) - 1, 0, -1):
-        if r[i] == 0:
-            r = r[0:i] 
-    return r  
-
-# cleans the array from leading 0s
 def clear_array(r):
     i = len(r) - 1 
 
@@ -137,12 +130,8 @@ def normalize(f,mod):
 
     return f
 
-
-
 def input_check(f,g,m):
     return True if get_degree(f) == -1 else False, True if get_degree(g) == -1 else False, False if m >= 2 else True
-
-    
 
 # multiply 2 polynomials f,g with mod m
 def polynomial_multiplication(f, g, m):
@@ -192,7 +181,7 @@ def polynomial_division(f,g,m):
 
     # self explanatory, if g has higher degree then return quotient = 0, remainder = f
     if get_degree(f) < get_degree(g):
-        return 0,f 
+        return [0],f 
 
     
     inv_lcg = mod_inv(g[-1],m)
@@ -340,6 +329,7 @@ def finite_field_subtraction(mod, f, g, p_mod):
     
     return clear_array(r)
 
+
 def finite_field_multiplication(mod, f, g, p_mod):
     a = polynomial_multiplication(f, g, mod)
     q, r = polynomial_division(a, p_mod, mod)
@@ -394,6 +384,6 @@ def finite_field_inversion(mod, f,  p_mod):
 #print(polynomial_extended_euclidian([1,1,9,1],[1,7,6],5))
 
 #for testing
-print(finite_field_inversion(2, [1,1,1,1],[1,1]))
+# print(finite_field_inversion(2, [1,1,1,1],[1,1]))
 
 
