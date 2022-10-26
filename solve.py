@@ -416,6 +416,7 @@ def finite_field_primitivity_check(mod, f, p_mod):
             check = False 
     
     return check
+print(finite_field_primitivity_check(7, [0,1], [5,2,1]))
 
 def random_element_in_F(mod, p_mod):
     a = []
@@ -433,7 +434,7 @@ def primitive_element_generation(mod, p_mod):
         a = random_element_in_F(mod, p_mod)
 
     return a
-print(primitive_element_generation(5, [4,1,2,1]))
+#print(primitive_element_generation(5, [4,1,2,1]))
 
 
 #print(polynomial_arithmetic_additon(mod, f, g))
