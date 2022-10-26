@@ -433,5 +433,11 @@ def primitive_element_generation(mod, p_mod):
         a = random_element_in_F(mod, p_mod)
 
     return a
-
 print(primitive_element_generation(5, [4,1,2,1]))
+
+
+#print(polynomial_arithmetic_additon(mod, f, g))
+#print(polynomial_arithmetic_subtraction(mod, f, g))
+#print(finite_field_addition(mod, f, g, p_mod))
+#print(finite_field_subtraction(mod, f, g, p_mod))
+#print(finite_field_primitivity_check(mod, f, p_mod))
