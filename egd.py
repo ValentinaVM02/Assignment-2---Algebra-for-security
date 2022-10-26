@@ -105,7 +105,7 @@ def swap(f,g):
 def mod_inv(x,mod):
     for i in range(1,mod):
         if ((x*i) % mod == 1):
-            return i
+            return [i]
 
 # find degree of polynomial f
 def get_degree(f):
@@ -191,7 +191,7 @@ def polynomial_division(f,g,m):
 
     while  get_degree(r) >= get_degree(g) and (get_degree(r) != -1):
         i = get_degree(r) - get_degree(g)
-        c = (r[-1] * inv_lcg) % m
+        c = (r[-1] * inv_lcg[0]) % m
         t = [ 0 ] * (i+1)
         t[-1] = c
         q[i] += (c) 
@@ -208,7 +208,7 @@ def polynomial_division(f,g,m):
 def polynomial_extended_euclidian(f,g,m):
 
     # inverse of the lc(f) for the normalized output
-    ilcf = [mod_inv(f[-1],m)]
+    ilcf = mod_inv(f[-1],m)
 
     # swap polynomials if degree of F is smaller than G
     if get_degree(g) > get_degree(f):
