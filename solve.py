@@ -304,16 +304,20 @@ def element_gen(n,p):
 # print(irreducible_element_generation(parsed_json['integer_modulus'], parsed_json['degree']))
 
 def finite_field_addition(mod, f, g, p_mod):
+    #calculates the sum of the same degree polynomials 
     a = polynomial_arithmetic_additon(mod, f, g)
+    #calculates the answer using the polynomial division where the answer is the remeinder of the calculation
     q, r = polynomial_division(a, p_mod, mod)
-    
+    #any leading zeros from the answer
     return clean_array(r)
 
 
 def finite_field_subtraction(mod, f, g, p_mod):
+    #calculates the difference of the same degree polynomials
     a = polynomial_arithmetic_subtraction(mod, f, g)
+    #calculates the answer using the polynomial division where the answer is the remeinder of the calculation
     q, r = polynomial_division(a, p_mod, mod)
-    
+    #any leading zeros from the answer
     return clean_array(r)
 
 
