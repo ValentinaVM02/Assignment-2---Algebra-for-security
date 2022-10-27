@@ -415,7 +415,7 @@ def finite_field_primitivity_check(mod, f, p_mod):
 def random_element_in_F(mod, p_mod):
     a = []
     for i in range (len(p_mod)):
-        a.append(randrange(0, mod))
+        a.append(randrange(0, mod)) # add numbers to the emptry array that are within mod and the legth of the array is withing p_mod
     q,r = polynomial_division(a, p_mod, mod)
 
     return clean_array(r)
