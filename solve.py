@@ -61,8 +61,6 @@ def polynomial_arithmetic_subtraction(mod, f, g):
 
 
 # swaps the arrays
-
-# swaps the arrays
 def swap(f,g):
     h = f
     f = g
