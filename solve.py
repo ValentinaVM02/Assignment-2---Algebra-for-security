@@ -344,23 +344,6 @@ def element_gen(n,p):
 # print(polynomial_multiplication([4,4,0,1],[1,1], 5)) # result 
 # print(polynomial_multiplication([4,4,0,1],[1,1], 0)) # None since modulus 0
 
-# def random_element_in_F(mod, deg):
-#     a = []
-#     for i in range (len(deg)):
-#         a.append(randrange(0, mod))
-    
-#     q,r = polynomial_division(a, deg, mod)
-
-#     return clear_array(r)
-
-    for i in range(0,n):
-        coeff = random.randint(0,(p-1))
-        polynomial[i] = coeff
-
-    polynomial[n] = random.randint(1,(p-1))
-    
-    return polynomial
-
 
 def irreducible_polynomial_generator(n,p):
     # create an array (len=n) of random coeff in range(0,p)
