@@ -358,13 +358,13 @@ def irreducible_polynomial_generator(n,p):
     # degree(f) = n & f is irreducible
     return polynomial
 
-# for testing:
-user_file = open('exercise4 (2).json', 'r')
-file_contents = user_file.read()
-user_file.close()
-parsed_json = json.loads(file_contents)
+# # for testing:
+# user_file = open('exercise4 (2).json', 'r')
+# file_contents = user_file.read()
+# user_file.close()
+# parsed_json = json.loads(file_contents)
 
-print(irreducible_polynomial_generator(parsed_json['integer_modulus'], parsed_json['degree']))
+# print(irreducible_polynomial_generator(parsed_json['integer_modulus'], parsed_json['degree']))
 
 def finite_field_addition(mod, f, g, p_mod):
     #calculates the sum of the same degree polynomials 
@@ -392,23 +392,30 @@ def finite_field_multiplication(mod, f, g, p_mod):
 
 
 def finite_field_division(mod, f, g, p_mod):
+    
     q , r = polynomial_division(f, g, mod)
 
-    if get_degree(q) > get_degree(p_mod)-1:
-        q , r_q =  polynomial_division(q, p_mod, mod)
+    r_q, q =  polynomial_division(q, p_mod, mod)
     
-    if get_degree(r) > get_degree(p_mod)-1:
-        q_r , r =  polynomial_division(q, p_mod, mod)
+    q_r , r =  polynomial_division(r, p_mod, mod)
     
     return clear_array(q) , clear_array(r)
 
 
-def finite_field_inversion(mod, f,  p_mod):
-    x, y, d = polynomial_extended_euclidian(f,p_mod, mod)
-    x_f = polynomial_division(x,p_mod,mod)
+# for testing:
+user_file = open('exercise8 (2).json', 'r')
+file_contents = user_file.read()
+user_file.close()
+parsed_json = json.loads(file_contents)
+
+print(finite_field_division(parsed_json['integer_modulus'], parsed_json['f'], parsed_json['g'], parsed_json['polynomial_modulus']))
+
+def finite_field_inversion(mod, f, p_mod):
+    d, x, y = polynomial_extended_euclidian(f,p_mod, mod)
+    q_f, r_f = polynomial_division(x,p_mod,mod)
     
-    if len(d) == 1 and d[0] == 1:
-        return x_f
+    if len(d) == 1:
+        return r_f
     else:
         return None
         
@@ -461,14 +468,14 @@ def finite_field_primitivity_check(mod, f, p_mod):
       
     ord_dec = set(decomposition(ord)) # get the prime divisors only once
     for dec in ord_dec:
-        powers.append(ord // dec)
+        powers.append(ord // dec) # calculate the needed powers and put them into the array
     for power in powers:
         total = f
         for i in range (power-1):
-            total = finite_field_multiplication(mod, f, total, p_mod)
-        results.append(total)
+            total = finite_field_multiplication(mod, f, total, p_mod) # calculate the raised polynomials
+        results.append(total) # add the results in the array
     for result in results:
-        if is_one(result):
+        if is_one(result): # check if the result is 1, if it is then the polynomial is not primitive
             check = False 
     
     return check
@@ -483,8 +490,8 @@ def random_element_in_F(mod, p_mod):
 
 # generate new polynomials until one of them is primitive
 def primitive_element_generation(mod, p_mod):
-    a = random_element_in_F(mod, p_mod)
-    while not finite_field_primitivity_check(mod, a, p_mod):
+    a = random_element_in_F(mod, p_mod) # generate a random polynomial in the field F
+    while not finite_field_primitivity_check(mod, a, p_mod): # do a while loop until you find a primitive element
         a = random_element_in_F(mod, p_mod)
 
     return a
@@ -534,19 +541,20 @@ def solve_exercise(exercise_location : str, answer_location : str):
         # Check what task within the finite field arithmetic tasks we need to perform
         poly_mod = exercise["polynomial_modulus"] 
         if exercise["task"] == "addition":
-            finite_field_addition(m,f,g,poly_mod)
+            result = finite_field_addition(m,f,g,poly_mod)
         elif exercise["task"] == "subtraction":
-            finite_field_subtraction(m,f,g,poly_mod)
+            result = finite_field_subtraction(m,f,g,poly_mod)
         elif exercise["task"] == "multiplication":
-            finite_field_multiplication(m,f,g,poly_mod)
+            result = finite_field_multiplication(m,f,g,poly_mod)
         elif exercise["task"] == "division":
-            finite_field_division(m,f,g,poly_mod)
+            q, r = finite_field_division(m,f,g,poly_mod)
+            answer = {"answer-q":q, "answer-r":r} if q != None else {"answer":None}
         elif exercise["task"] == "inversion":
-            finite_field_inversion(m,f,poly_mod)
+            result = finite_field_inversion(m,f,poly_mod)
         elif exercise["task"] == "primitivity_check":
-            finite_field_primitivity_check(m,f,poly_mod)
+            result = finite_field_primitivity_check(m,f,poly_mod)
         elif exercise["task"] == "primitive_element_generation":
-            primitive_element_generation(m, poly_mod)
+            result = primitive_element_generation(m, poly_mod)
     
     if exercise["task"] in ["addition","subtraction","multiplication","irreducible_element_generation"]:
             answer = {"answer": result} 
