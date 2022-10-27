@@ -1,3 +1,4 @@
+import random as random
 from solve import polynomial_arithmetic_subtraction
 
 # swaps the arrays
@@ -37,9 +38,7 @@ def clear_array(r):
 
 def input_check(f,g,m):
     return True if get_degree(f) == -1 else False, True if get_degree(g) == -1 else False, False if m >= 2 else True
-
     
-
 # multiply 2 polynomials f,g with mod m
 def polynomial_multiplication(f, g, m):
 
@@ -183,11 +182,28 @@ def pol_gcd(f,g,m):
     return pol_gcd(polynomial_division(g,f,m)[1],f,m)
 
 def irreducibility_input_check(f,p):
-    return False if ((get_degree(f) == -1) or (get_degree(f) > 5)) else True, False if ((13 < p) or (p < 2)) else True
+    return True if ((get_degree(f) == -1) or (get_degree(f) > 5)) else False, True if ((13 < p) or (p < 2)) else False
 
-def polynomial_irreducibility_check(f,p):
+def check(f,prime):
+
+    if (f[0] % prime == 0):
+        return False
     
-    fIsW, pIsW = irreducibility_input_check(f,p)
+    for i in range(1,len(f)):
+        if (f[i] % prime != 0):
+            return False
+    
+    if (f[0] % (prime * prime) == 0):
+        return False
+
+    return True
+
+
+def polynomial_irreducibility_check(f,m):
+    
+    fIsW, pIsW = irreducibility_input_check(f,m)
+
+    primes = [2,3,5,7,9,11,13]
 
     # prime not in range
     if pIsW:
@@ -201,9 +217,9 @@ def polynomial_irreducibility_check(f,p):
     if get_degree(f) == 1:
         return True
 
-     # all polynomials (!= 0) without a constant is reducible
+     # all polynomials (!= 0) without a constant are reducible
     if f[0] == 0:
-        return True
+        return False
     
     # all polynomials = c + x^n are irreducible
     if f[0] != 0 and [f[i] == 0 for i in range(1,len(f)-1)]:
@@ -211,15 +227,44 @@ def polynomial_irreducibility_check(f,p):
     
     
     # implement Eisenstein criteron
-            
+    for prime in primes:
+        if check(f,prime):
+            return True
+
+    return False
+
+def irreducible_polynomial_generator(n,p):
+    
+    # create an array (len=n) of random coeff in range(0,p)
+    polynomial = element_gen(n,p)
+
+    reducibles = [[]] 
+
+    while (not polynomial_irreducibility_check(polynomial,p)) or (polynomial in reducibles):
+        if (polynomial not in reducibles):
+            reducibles.append(polynomial)
+        polynomial = element_gen(n,p)
+    
+    # degree(f) = n & f is irreducible
+    return polynomial
 
 
-    return True
+def element_gen(n,p):
+    polynomial = [ 0 ] * (n+1)    
 
+    for i in range(0,n):
+        coeff = random.randint(0,(p-1))
+        polynomial[i] = coeff
+
+    polynomial[n] = random.randint(1,(p-1))
+    
+    return polynomial
 
 
 # Test cases for irreducibility check
-# print(polynomial_irreducibility_check([1,1,0,1],2))
+print(polynomial_irreducibility_check([0, 4, 0, 4],5))
+print(polynomial_irreducibility_check([1,0,1],2))
+print(irreducible_polynomial_generator(2,2))
 
 # Test cases for division
 
@@ -237,3 +282,5 @@ def polynomial_irreducibility_check(f,p):
 # print(polynomial_multiplication([0],[4,4,0,1], 5)) # 0
 # print(polynomial_multiplication([4,4,0,1],[1,1], 5)) # result
 # print(polynomial_multiplication([4,4,0,1],[1,1], 0)) # None
+
+

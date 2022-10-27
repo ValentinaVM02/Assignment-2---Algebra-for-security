@@ -434,4 +434,4 @@ def primitive_element_generation(mod, p_mod):
 
     return a
 
-print(primitive_element_generation(5, [4,1,2,1]))
+#print(primitive_element_generation(5, [4,1,2,1]))
