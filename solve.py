@@ -1,4 +1,4 @@
-##
+    ##
 # 2WF90 Algebra for Security -- Software Assignment 2
 # Polynomial and Finite Field Arithmetic
 # solve.py
@@ -21,44 +21,6 @@ import random as random
 
 
 
-def solve_exercise(exercise_location : str, answer_location : str):
-    """
-    solves an exercise specified in the file located at exercise_location and
-    writes the answer to a file at answer_location. Note: the file at
-    answer_location might not exist yet and, hence, might still need to be created.
-    """
-    
-    # Open file at exercise_location for reading.
-    with open(exercise_location, "r") as exercise_file:
-        # Deserialize JSON exercise data present in exercise_file to corresponding Python exercise data 
-        exercise = json.load(exercise_file)
-        
-
-    ### Parse and solve ###
-
-    # Check type of exercise
-    if exercise["type"] == "polynomial_arithmetic":
-        # Check what task within the polynomial arithmetic tasks we need to perform
-        if exercise["task"] == "addition":
-            # Solve polynomial arithmetic addition exercise
-            pass
-        elif exercise["task"] == "subtraction":
-            # Solve polynomial arithmetic subtraction exercise
-            pass
-        # et cetera
-    else: # exercise["type"] == "finite_field_arithmetic"
-        # Check what task within the finite field arithmetic tasks we need to perform
-        if exercise["task"] == "addition":
-            # Solve finite field arithmetic addition exercise
-            pass
-        # et cetera
-
-
-    # Open file at answer_location for writing, creating the file if it does not exist yet
-    # (and overwriting it if it does already exist).
-    with open(answer_location, "w") as answer_file:
-        # Serialize Python answer data (stored in answer) to JSON answer data and write it to answer_file
-        json.dump(answer, answer_file, indent=4)
     
 def polynomial_arithmetic_additon(mod, f, g):
     min_length = min(len(g), len(f))
@@ -99,6 +61,8 @@ def polynomial_arithmetic_subtraction(mod, f, g):
 
 
 # swaps the arrays
+
+# swaps the arrays
 def swap(f,g):
     h = f
     f = g
@@ -109,31 +73,31 @@ def swap(f,g):
 def mod_inv(x,mod):
     for i in range(1,mod):
         if ((x*i) % mod == 1):
-            return i
+            return [i]
 
 # find degree of polynomial f
 def get_degree(f):
     return -1 if (len(f) == 1 and (f[0] == 0)) else len(f) - 1 
 
-# clears the array from leading 0s
-def clean_array(r):
+# cleans the array from leading 0s
+def clear_array(r):
     i = len(r) - 1 
+
     while r[i] == 0 and i > 0:
         r = r[0:i]
         i = i - 1 
-    return r  
+    
+    return r
 
-#normalizes coeffiecients of polynomial
-def normalize(f,mod):
-    for i in range(len(f)):
-        f[i] = f[i]%mod
-    return f
-
+# checks whether the inputs are in right format, i.e if modulus != 0
 def input_check(f,g,m):
     return True if get_degree(f) == -1 else False, True if get_degree(g) == -1 else False, False if m >= 2 else True
-
+    
 # multiply 2 polynomials f,g with mod m
 def polynomial_multiplication(f, g, m):
+
+    
+    # "--"IsZ - is set to True iff "--" = 0, i.e. if f = [0] => fIsZ = True
     fIsZ, gIsZ, mIsZ = input_check(f,g,m)
 
     # modulus = 0
@@ -144,15 +108,21 @@ def polynomial_multiplication(f, g, m):
     if fIsZ or gIsZ:
         return [0]
 
+    # self-explanatory
     l = len(f)
     k = len(g)
 
+    # resulting array length can not be greater than the sum of length of the polynomial arrays. 
     result = [0] * (l + k - 1) 
 
+    # i,j denote the index and the degree of the monomial, i.e. if i = 2 => f[2] = 5 => 5(X^2)
+    # multiply every index i of f with every index j of g, add the resulting value to the i+j index.
+    # i.e f[2] = 5, g[3] = 3, f[i](X^i)*g[j](X^j) = (f[i] * g[j]) (X^(i+j)) = 5(X^2) * 3(X^3) = 15(X^5)
     for i in range(l):
         for j in range(k):
             result[i+j] += f[i]*g[j]
 
+    # turns all coefficients into modulo m values
     for e in range(0,len(result)):
         result[e] %= m
 
@@ -161,6 +131,8 @@ def polynomial_multiplication(f, g, m):
 
 # polynomial long division
 def polynomial_division(f,g,m):
+
+    # "--"IsZ - is set to True iff "--" = 0, i.e. if f = [0] => fIsZ = True
     fIsZ, gIsZ, mIsZ = input_check(f,g,m)
 
     # case : modulus = 0 
@@ -175,34 +147,73 @@ def polynomial_division(f,g,m):
     if (fIsZ) and (get_degree(g) > 0):
         return [0], [0]
 
+
     # self explanatory, if g has higher degree then return quotient = 0, remainder = f
     if get_degree(f) < get_degree(g):
         return [0],f 
-  
+
+
+    # inverse of lc(g)
     inv_lcg = mod_inv(g[-1],m)
+
+    # initialize the array where len(array) = max(degree(f), degree(g)) + 1
+    # remainder/quotient polynomial degree can not be greater than the degrees of the given parameters (since it is division)
     r, q = f, [ 0 ] * (max(get_degree(f),get_degree(g))+1)
 
+
+    # the formula is from the algebra script we received, namely Algorithm 2.2.2.
+    # while loop terminates when either remainder = 0 or degree(r) < degree(g) 
     while  get_degree(r) >= get_degree(g) and (get_degree(r) != -1):
+        # denotes the power X in the given iteration
         i = get_degree(r) - get_degree(g)
-        c = (r[-1] * inv_lcg) % m
+
+        # the coefficient of X which is (lc(r) * lc(b)^-1, in this case r[-1] = lc(r) & inv_lcg = lc(g)^-1)
+        c = (r[-1] * inv_lcg[0]) % m
+        
+        # holds the polynomial that will be subtracted from r
         t = [ 0 ] * (i+1)
+
+        # lc(t) = c
         t[-1] = c
+
+        # add the coefficient to the quotient array
         q[i] += (c) 
+        
+        # i = degree(r) - degree(g)
+        # t = (lc(r) * inv(lc(g))) * (X^i)
+        # g = given g
         tg = polynomial_multiplication(t, g, m)
-        r = clean_array(polynomial_arithmetic_subtraction(m,r,tg)) 
+        
+        # tg = t * g
+        # r = r - tg
+        # the array is cleared from leading zeroes
+        r = clear_array(polynomial_arithmetic_subtraction(m,r,tg)) 
+    
+    q = clear_array(q)
 
-    return clean_array(q),r
+    # returns the quotient and remainder (clear from leading zeroes)
+    return q,r
 
-
+# 
 # finds x,y and d, where d = gcd(f,g) and xf + yg = d (all values are mod m)
 def polynomial_extended_euclidian(f,g,m):
-   
+    
+    # undefined modulus
+    if m == 0:
+        return None, None, None
+
+    # Base case for recursion
     if get_degree(f) == -1:
         return g, [0], [1]
 
+    # remainder of the polynomial division f/g
     r = polynomial_division(g,f,m)[1]
-    gcd,x1,y1 = polynomial_extended_euclidian(r,f,m)
 
+    # for first recursive iteration, ext_euclidean for remainder and the value of the initial divisor 
+    # for all the iteration afterwards, ext_euclidean for the previous divisor and remainder
+    gcd,x1,y1 = polynomial_extended_euclidian(r,f,m)
+    
+    # 
     q = polynomial_division(g,f,m)[0]
     qx1 = polynomial_multiplication(q,x1,m)
 
@@ -222,15 +233,19 @@ def pol_gcd(f,g,m):
 def irreducibility_input_check(f,p):
     return True if ((get_degree(f) == -1) or (get_degree(f) > 5)) else False, True if ((13 < p) or (p < 2)) else False
 
+# function that checks for Eisenstein's Irreducibility Criterion 
 def check(f,prime):
 
-    if (f[0] % prime == 0):
+    # prime should not divide the leading coefficient
+    if (f[-1] % prime == 0):
         return False
     
+    # every other index should be divided by the prime 
     for i in range(1,len(f)):
         if (f[i] % prime != 0):
             return False
     
+    # the constant should not be divided by prime^2
     if (f[0] % (prime * prime) == 0):
         return False
 
@@ -238,7 +253,9 @@ def check(f,prime):
 
 
 def polynomial_irreducibility_check(f,m):
+    
     fIsW, pIsW = irreducibility_input_check(f,m)
+
     primes = [2,3,5,7,9,11,13]
 
     # prime not in range
@@ -264,28 +281,79 @@ def polynomial_irreducibility_check(f,m):
     
     # implement Eisenstein criteron
     for prime in primes:
+        # check for every prime in range [2,13]
         if check(f,prime):
             return True
 
     return False
 
 def irreducible_polynomial_generator(n,p):
+    
     # create an array (len=n) of random coeff in range(0,p)
     polynomial = element_gen(n,p)
 
+    # all the previously created reducible polynomials are stored here
     reducibles = [[]] 
 
+    # the created polynomial should not be in the reducibles and should be irreducible
     while (not polynomial_irreducibility_check(polynomial,p)) or (polynomial in reducibles):
+        
+        # add to the reducibles if not there already
         if (polynomial not in reducibles):
             reducibles.append(polynomial)
+        
+        # create new polynomial for the next iteration
         polynomial = element_gen(n,p)
     
     # degree(f) = n & f is irreducible
     return polynomial
 
 
+# create an array of random coefficients in given ranges
 def element_gen(n,p):
+
     polynomial = [ 0 ] * (n+1)    
+
+    for i in range(0,n):
+        coeff = random.randint(0,(p-1))
+        polynomial[i] = coeff
+
+    # leading coefficient can not be zero
+    polynomial[n] = random.randint(1,(p-1))
+    
+    return polynomial
+
+
+# # Test cases for irreducibility check
+
+# print(polynomial_irreducibility_check([0, 4, 0, 4],5)) # False since 4x + 4(x^3) is reducible
+# print(polynomial_irreducibility_check([1,0,1],2)) # True since x^2 + 1 is irreducible
+
+# Test cases for division
+
+# print(polynomial_division([4,4,0,1],[0], 5)) # None since g is 0
+# print(polynomial_division([0],[0], 5)) # None since 0/0 is undefined
+# print(polynomial_division([0],[4,4,0,1], 5)) # 0, 0 since division of 0
+# print(polynomial_division([2,1,1,4,2,3],[0,3,3,1,2], 5)) # q,r (arbitrary inputs)
+# print(polynomial_division([4,4,0,1],[1,1], 0)) # None since modulus is 0
+
+
+# Test cases for multiplication
+
+# print(polynomial_multiplication([4,4,0,1],[0], 5)) # 0 (multiplication by zero)
+# print(polynomial_multiplication([0],[0], 5)) # 0 (multiplication by 0)
+# print(polynomial_multiplication([0],[4,4,0,1], 5)) # 0 (multiplication by 0)
+# print(polynomial_multiplication([4,4,0,1],[1,1], 5)) # result 
+# print(polynomial_multiplication([4,4,0,1],[1,1], 0)) # None since modulus 0
+
+# def random_element_in_F(mod, deg):
+#     a = []
+#     for i in range (len(deg)):
+#         a.append(randrange(0, mod))
+    
+#     q,r = polynomial_division(a, deg, mod)
+
+#     return clear_array(r)
 
     for i in range(0,n):
         coeff = random.randint(0,(p-1))
@@ -309,7 +377,7 @@ def finite_field_addition(mod, f, g, p_mod):
     #calculates the answer using the polynomial division where the answer is the remeinder of the calculation
     q, r = polynomial_division(a, p_mod, mod)
     #any leading zeros from the answer
-    return clean_array(r)
+    return clear_array(r)
 
 
 def finite_field_subtraction(mod, f, g, p_mod):
@@ -317,15 +385,15 @@ def finite_field_subtraction(mod, f, g, p_mod):
     a = polynomial_arithmetic_subtraction(mod, f, g)
     #calculates the answer using the polynomial division where the answer is the remeinder of the calculation
     q, r = polynomial_division(a, p_mod, mod)
-    #any leading zeros from the answer
-    return clean_array(r)
+    
+    return clear_array(r)
 
 
 def finite_field_multiplication(mod, f, g, p_mod):
     a = polynomial_multiplication(f, g, mod)
     q, r = polynomial_division(a, p_mod, mod)
     
-    return clean_array(r)
+    return clear_array(r)
 
 
 def finite_field_division(mod, f, g, p_mod):
@@ -337,7 +405,7 @@ def finite_field_division(mod, f, g, p_mod):
     if get_degree(r) > get_degree(p_mod)-1:
         q_r , r =  polynomial_division(q, p_mod, mod)
     
-    return clean_array(q) , clean_array(r)
+    return clear_array(q) , clear_array(r)
 
 
 def finite_field_inversion(mod, f,  p_mod):
@@ -347,7 +415,7 @@ def finite_field_inversion(mod, f,  p_mod):
     if len(d) == 1 and d[0] == 1:
         return x_f
     else:
-        return 'inverse does not exits'
+        return None
         
 
 # provide the prime dividers of a number
@@ -409,8 +477,6 @@ def finite_field_primitivity_check(mod, f, p_mod):
             check = False 
     
     return check
-
-
 # generate a random polynomial that is in field F
 def random_element_in_F(mod, p_mod):
     a = []
@@ -418,7 +484,7 @@ def random_element_in_F(mod, p_mod):
         a.append(randrange(0, mod)) # add numbers to the emptry array that are within mod and the legth of the array is withing p_mod
     q,r = polynomial_division(a, p_mod, mod)
 
-    return clean_array(r)
+    return clear_array(r)
 
 # generate new polynomials until one of them is primitive
 def primitive_element_generation(mod, p_mod):
@@ -427,3 +493,73 @@ def primitive_element_generation(mod, p_mod):
         a = random_element_in_F(mod, p_mod)
 
     return a
+
+def solve_exercise(exercise_location : str, answer_location : str):
+    """
+    solves an exercise specified in the file located at exercise_location and
+    writes the answer to a file at answer_location. Note: the file at
+    answer_location might not exist yet and, hence, might still need to be created.
+    """
+    
+    # Open file at exercise_location for reading.
+    with open(exercise_location, "r") as exercise_file:
+        # Deserialize JSON exercise data present in exercise_file to corresponding Python exercise data 
+        exercise = json.load(exercise_file)
+    
+    
+    ### Parse and solve ###
+    m = exercise["integer_modulus"]   
+    degree = exercise["degree"] if exercise["task"] == "irreducible_element_generation" else 0
+    f = exercise["f"] if not(exercise["task"] == "irreducible_element_generation" or exercise["task"] == "primitive_element_generation") else []
+    g = exercise["g"] if exercise["task"] in ["addition", "subtraction", "multiplication", "long_division",
+                                                    "extended_euclidean_algorithm","divison"] else []
+        
+    
+    # Check type of exercise
+    if exercise["type"] == "polynomial_arithmetic":
+        # Check what task within the polynomial arithmetic tasks we need to perform
+        if exercise["task"] == "addition":
+            result = polynomial_arithmetic_additon(m,f,g)
+        elif exercise["task"] == "subtraction":
+            result = polynomial_arithmetic_subtraction(m,f,g)
+        elif exercise["task"] == "multiplication":
+            result = polynomial_multiplication(f,g,m)
+        elif exercise["task"] == "long_division":
+            q,r = polynomial_division(f,g,m)
+            answer = {"answer-q":q, "answer-r":r} if q != None else {"answer":None}
+        elif exercise["task"] == "extended_euclidean_algorithm":
+            gcd,a,b = polynomial_extended_euclidian(f,g,m)
+            answer = {"answer-a":a, "answer-b":b, "answer-gcd":gcd} if gcd != None else {"answer":None}
+        elif exercise["task"] == "irreducibility_check":
+            isIrreducible = polynomial_irreducibility_check(f,m)
+            answer = {"answer": isIrreducible} if isIrreducible != None else {"answer":None}
+        elif exercise["task"] == "irreducible_element_generation":
+            result = irreducible_polynomial_generator(degree,m) 
+    else: # exercise["type"] == "finite_field_arithmetic"
+        # Check what task within the finite field arithmetic tasks we need to perform
+        poly_mod = exercise["polynomial_modulus"] 
+        if exercise["task"] == "addition":
+            finite_field_addition(m,f,g,poly_mod)
+        elif exercise["task"] == "subtraction":
+            finite_field_subtraction(m,f,g,poly_mod)
+        elif exercise["task"] == "multiplication":
+            finite_field_multiplication(m,f,g,poly_mod)
+        elif exercise["task"] == "division":
+            finite_field_division(m,f,g,poly_mod)
+        elif exercise["task"] == "inversion":
+            finite_field_inversion(m,f,poly_mod)
+        elif exercise["task"] == "primitivity_check":
+            finite_field_primitivity_check(m,f,poly_mod)
+        elif exercise["task"] == "primitive_element_generation":
+            primitive_element_generation(m, poly_mod)
+    
+    if exercise["task"] in ["addition","subtraction","multiplication","irreducible_element_generation"]:
+            answer = {"answer": result} 
+
+
+    # Open file at answer_location for writing, creating the file if it does not exist yet
+    # (and overwriting it if it does already exist).
+    with open(answer_location, "w") as answer_file:
+        # Serialize Python answer data (stored in answer) to JSON answer data and write it to answer_file
+        json.dump(answer, answer_file, indent=4)
+    
