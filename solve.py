@@ -16,8 +16,9 @@
 
 # Import built-in json library for handling input/output 
 import json
-from operator import truediv
-from random import randint, randrange
+from random import randrange
+import random as random
+
 
 
 def solve_exercise(exercise_location : str, answer_location : str):
@@ -210,7 +211,6 @@ def polynomial_extended_euclidian(f,g,m):
 
     return gcd,x,y
 
-
 # only finds gcd, use it to check if the values for gcd are correct
 def pol_gcd(f,g,m):
 
@@ -219,13 +219,27 @@ def pol_gcd(f,g,m):
 
     return pol_gcd(polynomial_division(g,f,m)[1],f,m)
 
-
 def irreducibility_input_check(f,p):
-    return False if ((get_degree(f) == -1) or (get_degree(f) > 5)) else True, False if ((13 < p) or (p < 2)) else True
+    return True if ((get_degree(f) == -1) or (get_degree(f) > 5)) else False, True if ((13 < p) or (p < 2)) else False
 
-def polynomial_irreducibility_check(f,p):
+def check(f,prime):
+
+    if (f[0] % prime == 0):
+        return False
     
-    fIsW, pIsW = irreducibility_input_check(f,p)
+    for i in range(1,len(f)):
+        if (f[i] % prime != 0):
+            return False
+    
+    if (f[0] % (prime * prime) == 0):
+        return False
+
+    return True
+
+
+def polynomial_irreducibility_check(f,m):
+    fIsW, pIsW = irreducibility_input_check(f,m)
+    primes = [2,3,5,7,9,11,13]
 
     # prime not in range
     if pIsW:
@@ -239,34 +253,47 @@ def polynomial_irreducibility_check(f,p):
     if get_degree(f) == 1:
         return True
 
-     # all polynomials (!= 0) without a constant is reducible
+     # all polynomials (!= 0) without a constant are reducible
     if f[0] == 0:
-        return True
+        return False
     
     # all polynomials = c + x^n are irreducible
     if f[0] != 0 and [f[i] == 0 for i in range(1,len(f)-1)]:
         return True
-     
-    # implement Eisenstein criteron
-
-    return True
-
-# def random_element_in_F(mod, deg):
-#     a = []
-#     for i in range (len(deg)):
-#         a.append(randrange(0, mod))
     
-#     q,r = polynomial_division(a, deg, mod)
+    
+    # implement Eisenstein criteron
+    for prime in primes:
+        if check(f,prime):
+            return True
 
-#     return clean_array(r)
+    return False
+
+def irreducible_polynomial_generator(n,p):
+    # create an array (len=n) of random coeff in range(0,p)
+    polynomial = element_gen(n,p)
+
+    reducibles = [[]] 
+
+    while (not polynomial_irreducibility_check(polynomial,p)) or (polynomial in reducibles):
+        if (polynomial not in reducibles):
+            reducibles.append(polynomial)
+        polynomial = element_gen(n,p)
+    
+    # degree(f) = n & f is irreducible
+    return polynomial
 
 
-# def irreducible_element_generation(mod, deg):
-#     a = random_element_in_F(mod, deg)
-#     while not polynomial_irreducibility_check(mod, a, deg):
-#         a = random_element_in_F(mod, deg)
+def element_gen(n,p):
+    polynomial = [ 0 ] * (n+1)    
 
-#     return a
+    for i in range(0,n):
+        coeff = random.randint(0,(p-1))
+        polynomial[i] = coeff
+
+    polynomial[n] = random.randint(1,(p-1))
+    
+    return polynomial
 
 # for testing:
 # user_file = open('exercise4 (2).json', 'r')
@@ -319,6 +346,7 @@ def finite_field_inversion(mod, f,  p_mod):
         return 'inverse does not exits'
         
 
+# provide the prime dividers of a number
 def decomposition (n):
     i = 2
     decomp = []
@@ -333,6 +361,7 @@ def decomposition (n):
     return decomp
 
 
+# check whether a number is prime
 def is_prime(n):
   for i in range(2,n):
     if (n%i) == 0:
@@ -340,6 +369,7 @@ def is_prime(n):
   return True
 
 
+# check whether a polynomial equals 1
 def is_one(f):
     if len(f) == 0:
         return False
@@ -351,15 +381,16 @@ def is_one(f):
     return True
 
 
+# check if a certain polynomial is primitive
 def finite_field_primitivity_check(mod, f, p_mod):
-    ord = (mod**get_degree(f)) - 1
+    ord = (mod**get_degree(f)) - 1 # determine its order
     
     if is_prime(ord):
         return True
 
-    check = True  
-    powers = []
-    results = []  
+    check = True # store the boolean value 
+    powers = [] # store the powers to which the polynomial should be raised
+    results = [] # store the results of the polynomial raised to the certain powers
       
     ord_dec = set(decomposition(ord)) # get the prime divisors only once
     for dec in ord_dec:
@@ -376,6 +407,7 @@ def finite_field_primitivity_check(mod, f, p_mod):
     return check
 
 
+# generate a random polynomial that is in field F
 def random_element_in_F(mod, p_mod):
     a = []
     for i in range (len(p_mod)):
@@ -384,7 +416,7 @@ def random_element_in_F(mod, p_mod):
 
     return clean_array(r)
 
-
+# generate new polynomials until one of them is primitive
 def primitive_element_generation(mod, p_mod):
     a = random_element_in_F(mod, p_mod)
     while not finite_field_primitivity_check(mod, a, p_mod):
