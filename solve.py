@@ -322,29 +322,6 @@ def element_gen(n,p):
     return polynomial
 
 
-# # Test cases for irreducibility check
-
-# print(polynomial_irreducibility_check([0, 4, 0, 4],5)) # False since 4x + 4(x^3) is reducible
-# print(polynomial_irreducibility_check([1,0,1],2)) # True since x^2 + 1 is irreducible
-
-# Test cases for division
-
-# print(polynomial_division([4,4,0,1],[0], 5)) # None since g is 0
-# print(polynomial_division([0],[0], 5)) # None since 0/0 is undefined
-# print(polynomial_division([0],[4,4,0,1], 5)) # 0, 0 since division of 0
-# print(polynomial_division([2,1,1,4,2,3],[0,3,3,1,2], 5)) # q,r (arbitrary inputs)
-# print(polynomial_division([4,4,0,1],[1,1], 0)) # None since modulus is 0
-
-
-# Test cases for multiplication
-
-# print(polynomial_multiplication([4,4,0,1],[0], 5)) # 0 (multiplication by zero)
-# print(polynomial_multiplication([0],[0], 5)) # 0 (multiplication by 0)
-# print(polynomial_multiplication([0],[4,4,0,1], 5)) # 0 (multiplication by 0)
-# print(polynomial_multiplication([4,4,0,1],[1,1], 5)) # result 
-# print(polynomial_multiplication([4,4,0,1],[1,1], 0)) # None since modulus 0
-
-
 def irreducible_polynomial_generator(n,p):
     # create an array (len=n) of random coeff in range(0,p)
     polynomial = element_gen(n,p)
@@ -358,13 +335,6 @@ def irreducible_polynomial_generator(n,p):
     # degree(f) = n & f is irreducible
     return polynomial
 
-# # for testing:
-# user_file = open('exercise4 (2).json', 'r')
-# file_contents = user_file.read()
-# user_file.close()
-# parsed_json = json.loads(file_contents)
-
-# print(irreducible_polynomial_generator(parsed_json['integer_modulus'], parsed_json['degree']))
 
 def finite_field_addition(mod, f, g, p_mod):
     #calculates the sum of the same degree polynomials 
@@ -401,14 +371,6 @@ def finite_field_division(mod, f, g, p_mod):
     
     return clear_array(q) , clear_array(r)
 
-
-# for testing:
-user_file = open('exercise8 (2).json', 'r')
-file_contents = user_file.read()
-user_file.close()
-parsed_json = json.loads(file_contents)
-
-print(finite_field_division(parsed_json['integer_modulus'], parsed_json['f'], parsed_json['g'], parsed_json['polynomial_modulus']))
 
 def finite_field_inversion(mod, f, p_mod):
     d, x, y = polynomial_extended_euclidian(f,p_mod, mod)
@@ -495,6 +457,15 @@ def primitive_element_generation(mod, p_mod):
         a = random_element_in_F(mod, p_mod)
 
     return a
+
+# for testing:
+# user_file = open('exercise8 (2).json', 'r')
+# file_contents = user_file.read()
+# user_file.close()
+# parsed_json = json.loads(file_contents)
+
+# print(finite_field_division(parsed_json['integer_modulus'], parsed_json['f'], parsed_json['g'], parsed_json['polynomial_modulus']))
+
 
 def solve_exercise(exercise_location : str, answer_location : str):
     """
